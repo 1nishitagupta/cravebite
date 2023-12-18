@@ -51,6 +51,7 @@ const CreateContainer = () => {
     calories: "",
     price: "",
     imageAsset: null,
+    qty: 1,
   });
 
   const onSelect = (selectedList, selectedItem) => {
