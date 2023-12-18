@@ -31,8 +31,6 @@ const RowContainer = ({ flag, data, scrollValue, restaurant }) => {
     addtocart();
   }, [items]);
 
-  // console.log(rowContainer?.current?.scrollLeft, "data");
-
   return (
     <>
       {data?.length > 0 && (

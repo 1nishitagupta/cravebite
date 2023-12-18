@@ -60,7 +60,6 @@ const MainContainer = () => {
         </div>
         <div className="w-full flex gap-5 flex-wrap">
           {foodItems?.map((oitem, index) => {
-            console.log(oitem, "oitem");
             return (
               <RowContainer
                 restaurant={oitem?.restaurant}
