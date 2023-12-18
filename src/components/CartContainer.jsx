@@ -36,6 +36,8 @@ const CartContainer = () => {
     localStorage.setItem("cartItems", JSON.stringify([]));
   };
 
+  console.log(cartItems);
+
   return (
     <motion.div
       initial={{ opacity: 0, x: 200 }}
