@@ -1,16 +1,22 @@
 /* eslint-disable no-unused-vars */
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useStateValue } from "../context/StateProvider";
 import { actionType } from "../context/reducer";
 import { getAllFoodItems } from "../utils/firebaseFunctions";
+import { motion } from "framer-motion";
 import restaurantPic1 from "../assets/restaurant1.jpg";
-import restaurantPic2 from "../assets/restaurant2.jpg";
-import restaurantPic3 from "../assets/restaurant3.jpg";
-import restaurantPic4 from "../assets/restaurant4.jpg";
-import restaurantPic5 from "../assets/restaurant5.jpg";
+import SearchComponent from "./SearchComponent";
+import { SkeletonLoader } from "./SkelatonLoader";
+import FilterComponent from "./FilterComponent";
 
 const RestaurantList = () => {
   const [{ foodItems }, dispatch] = useStateValue();
+
+  const [filteredItems, setFilteredItems] = useState([]);
+
+  const [sortOption, setSortOption] = useState("default");
+  const [selectedLocations, setSelectedLocations] = useState([]);
+  const [uniqueLocations, setUniqueLocations] = useState([]);
 
   const fetchData = async () => {
     await getAllFoodItems().then((data) => {
@@ -18,93 +24,196 @@ const RestaurantList = () => {
         type: actionType.SET_FOOD_ITEMS,
         foodItems: data,
       });
+      setFilteredItems(data);
+      const locations = data.map((item) => item.location);
+      setUniqueLocations([...new Set(locations)]);
     });
+  };
+
+  const handleSearch = (searchTerm) => {
+    const filtered = foodItems.filter((item) =>
+      item?.restaurant?.toLowerCase()?.includes(searchTerm.toLowerCase())
+    );
+    setFilteredItems(filtered);
+  };
+
+  const handleFilterChange = (option) => {
+    setSortOption(option);
+
+    let sortedItems = [...filteredItems];
+
+    switch (option) {
+      case "alphabetical":
+        sortedItems.sort((a, b) =>
+          a.restaurant.localeCompare(b.restaurant, undefined, {
+            sensitivity: "base",
+          })
+        );
+        break;
+      case "priceLowToHigh":
+        sortedItems.sort((a, b) => a.price - b.price);
+        break;
+      case "priceHighToLow":
+        sortedItems.sort((a, b) => b.price - a.price);
+        break;
+      case "location":
+        sortedItems.sort((a, b) =>
+          a.location.localeCompare(b.location, undefined, {
+            sensitivity: "base",
+          })
+        );
+        break;
+      // Add more cases for additional sorting options
+      default:
+        // Default case: no sorting
+        break;
+    }
+
+    setFilteredItems(sortedItems);
   };
 
   useEffect(() => {
     fetchData();
   }, []);
 
+  console.log(uniqueLocations);
+
   return (
-    <section className="flex flex-col items-center gap-10 " id="home">
-      {foodItems?.map((item, index) => {
-        return (
+    <div className="w-full">
+      <div className="w-full flex justify-center items-center">
+        <SearchComponent onSearch={handleSearch} />
+        <FilterComponent onFilterChange={handleFilterChange} />
+      </div>
+      <motion.section
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 items-center"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        {filteredItems?.length > 0 ? (
           <>
-            <div className="flex font-sans border border-solid	border-gray-300	">
-              <div className="flex-none w-48 relative">
-                <img
-                  src={restaurantPic2}
+            {filteredItems?.map((item, index) => (
+              <motion.div
+                key={index}
+                className="bg-white rounded-lg overflow-hidden shadow-md transition-transform duration-300 transform hover:scale-105"
+              >
+                <motion.img
+                  src={
+                    item?.restaurantImage
+                      ? item?.restaurantImage
+                      : restaurantPic1
+                  }
                   alt=""
-                  className="absolute inset-0 w-full h-full object-cover"
+                  className="w-full h-48 object-cover object-center"
                   loading="lazy"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.2 }}
                 />
-              </div>
-              <div className="flex-auto p-6">
-                <div className="flex flex-wrap">
-                  <h1 className="flex-auto text-lg font-semibold text-slate-900">
-                    {item?.restaurant}
-                  </h1>
-                  <div className="text-lg font-semibold text-slate-500">
-                    $300-600
-                  </div>
-                  <div className="w-full flex-none text-sm font-medium text-slate-700 mt-2">
-                    {item?.location}
-                  </div>
-                </div>
-                <div className="flex items-baseline mt-4 mb-6 pb-6 border-b border-slate-200">
-                  <div className="  flex text-sm gap-2">
-                    {item?.categoriesInRestaurant?.map(({ name, id }) => {
-                      return (
-                        <label key={id}>
-                          <input
-                            className="sr-only peer"
-                            name="size"
-                            type="radio"
-                            value="xs"
-                            checked
-                          />
-                          <div className="w-auto h-auto rounded-lg flex items-center justify-center p-2 text-slate-100 peer-checked:font-semibold bg-slate-900">
-                            {name}
-                          </div>
-                        </label>
-                      );
-                    })}
-                  </div>
-                </div>
-                <div className="flex space-x-4 mb-6 text-sm font-medium">
-                  <div className="flex-auto flex space-x-4">
-                    <button className="h-10 px-6 font-semibold rounded-md bg-black text-white">
-                      View More
-                    </button>
-                  </div>
-                  <button
-                    className="flex-none flex items-center justify-center w-9 h-9 rounded-md text-slate-300 border border-slate-200"
-                    type="button"
-                    aria-label="Like"
+                <div className="p-6">
+                  <motion.h1
+                    className="text-lg font-semibold text-gray-800"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.4 }}
                   >
-                    <svg
-                      width="20"
-                      height="20"
-                      fill="currentColor"
-                      aria-hidden="true"
+                    {item?.restaurant}
+                  </motion.h1>
+                  <motion.div
+                    className="text-lg font-semibold text-gray-600"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.6 }}
+                  >
+                    $300-600
+                  </motion.div>
+                  <motion.div
+                    className="text-sm font-medium text-gray-700 mt-2"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.8 }}
+                  >
+                    {item?.location}
+                  </motion.div>
+                  <motion.div
+                    className="flex items-baseline mt-4 mb-6 pb-6 border-b border-gray-200"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 1 }}
+                  >
+                    <motion.div className="flex text-sm gap-2">
+                      {item?.categoriesInRestaurant?.map(({ name, id }) => (
+                        <motion.div
+                          key={id}
+                          className="text-xs bg-gray-300 py-1 px-2 rounded-md"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ delay: 1.2 }}
+                        >
+                          {name}
+                        </motion.div>
+                      ))}
+                    </motion.div>
+                  </motion.div>
+                  <motion.div
+                    className="flex space-x-4 mb-6 text-sm font-medium"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 1.4 }}
+                  >
+                    <motion.div className="flex-auto flex space-x-4">
+                      <button className="h-10 px-6 font-semibold rounded-md bg-black text-white">
+                        View More
+                      </button>
+                    </motion.div>
+                    <motion.button
+                      className="flex-none flex items-center justify-center w-9 h-9 rounded-md text-gray-400 border border-gray-200"
+                      type="button"
+                      aria-label="Like"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 1.6 }}
                     >
-                      <path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
-                      />
-                    </svg>
-                  </button>
+                      <svg
+                        width="20"
+                        height="20"
+                        fill="currentColor"
+                        aria-hidden="true"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          clipRule="evenodd"
+                          d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+                        />
+                      </svg>
+                    </motion.button>
+                  </motion.div>
+                  <motion.p
+                    className="text-sm text-gray-700"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 1.8 }}
+                  >
+                    Free shipping on all orders above 1000.
+                  </motion.p>
                 </div>
-                <p className="text-sm text-slate-700">
-                  Free shipping on all orders above 1000.
-                </p>
-              </div>
-            </div>
+              </motion.div>
+            ))}
           </>
-        );
-      })}
-    </section>
+        ) : (
+          <>
+            <SkeletonLoader />
+            <SkeletonLoader />
+            <SkeletonLoader />
+            <SkeletonLoader />
+            <SkeletonLoader />
+            <SkeletonLoader />
+            <SkeletonLoader />
+            <SkeletonLoader />
+          </>
+        )}
+      </motion.section>
+    </div>
   );
 };
 

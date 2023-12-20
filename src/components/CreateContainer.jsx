@@ -24,17 +24,11 @@ import { useStateValue } from "../context/StateProvider";
 import { useNavigate } from "react-router-dom";
 import { errorToaster, successToaster } from "../utils/toastify";
 import goToTop from "../utils/goToTop";
-import MultiSelect from "./MultiSelect";
 import Multiselect from "multiselect-react-dropdown";
 
 const CreateContainer = () => {
   const navigate = useNavigate();
 
-  // const [title, setTitle] = useState("");
-  // const [calories, setCalories] = useState("");
-  // const [price, setPrice] = useState("");
-  // const [category, setCategory] = useState(null);
-  // const [imageAsset, setImageAsset] = useState(null);
   const [fields, setFields] = useState(false);
   const [alertStatus, setAlertStatus] = useState("danger");
   const [msg, setMsg] = useState(null);
@@ -44,6 +38,8 @@ const CreateContainer = () => {
   const [selectedValues, setSelectedValues] = useState([]);
   const [dishes, setDishes] = useState([]);
   const [location, setLocation] = useState("");
+  const [restaurantImage, setRestaurantImage] = useState(null);
+  const [isVegetarian, setIsVegetarian] = useState(false);
   const [currentDish, setCurrentDish] = useState({
     id: `${Date.now()}`,
     title: "",
@@ -64,6 +60,34 @@ const CreateContainer = () => {
     // Handle the onRemove logic here
     // You can perform any additional actions when an item is removed
     setSelectedValues(selectedList);
+  };
+
+  const uploadRestaurantImage = (e) => {
+    setIsLoading(true);
+    const imageFile = e.target.files[0];
+    const storageRef = ref(
+      storage,
+      `RestaurantImages/${Date.now()}-${imageFile?.name}`
+    );
+    const uploadTask = uploadBytesResumable(storageRef, imageFile);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const uploadProgress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      },
+      (error) => {
+        // Handle error
+        setIsLoading(false);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setRestaurantImage(downloadURL);
+          setIsLoading(false);
+        });
+      }
+    );
   };
 
   const uploadImage = (e) => {
@@ -150,6 +174,7 @@ const CreateContainer = () => {
       } else {
         const data = {
           restaurant: restaurant,
+          restaurantImage: restaurantImage,
           location: location,
           categoriesInRestaurant: selectedValues,
           dishes: dishes,
@@ -189,6 +214,19 @@ const CreateContainer = () => {
     });
   };
 
+  const deleteRestaurantImage = () => {
+    setIsLoading(true);
+    const deleteRef = ref(storage, restaurantImage);
+    deleteObject(deleteRef)
+      .then(() => {
+        setRestaurantImage(null);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        setIsLoading(false);
+      });
+  };
+
   const fetchData = async () => {
     await getAllFoodItems().then((data) => {
       dispatch({
@@ -212,15 +250,14 @@ const CreateContainer = () => {
     }
 
     // Add the current dish to the dishes array
-    setDishes([...dishes, currentDish]);
-
-    // Reset the current dish for the next entry
+    setDishes([...dishes, { ...currentDish, isVegetarian }]);
     setCurrentDish({
       title: "",
       category: "",
       calories: "",
       price: "",
       imageAsset: null,
+      isVegetarian: false, // Reset the vegetarian status for the next entry
     });
   };
 
@@ -250,6 +287,55 @@ const CreateContainer = () => {
 
         <div className="w-full">
           <h1 className="font-extrabold	 text-xl">Restaurant</h1>
+        </div>
+
+        <div className="group flex justify-center items-center flex-col border-2 border-dotted border-gray-300 w-full h-225 md:h-340 cursor-pointer rounded-lg">
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <>
+              {!restaurantImage ? (
+                <>
+                  <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer">
+                    <div className="w-full h-full flex flex-col items-center justify-center gap-2">
+                      <MdCloudUpload className="text-gray-500 text-3xl hover:text-gray-700" />
+                      <p className="text-gray-500 hover:text-gray-700">
+                        Click here to upload
+                      </p>
+                    </div>
+                    <input
+                      type="file"
+                      name="uploadRestaurantImage"
+                      accept="image/*"
+                      onChange={uploadRestaurantImage}
+                      className="w-0 h-0"
+                    />
+                  </label>
+                </>
+              ) : (
+                <>
+                  <div className="relative h-full">
+                    <img
+                      src={restaurantImage}
+                      alt="uploadedimage"
+                      className="w-full h-full object-cover"
+                    />
+                    <button
+                      type="button"
+                      className="absolute bottom-3 right-3 p-3 rounded-full bg-red-500 text-xl cursor-pointer outline-none hover:shadow-md duration-500 transition-all ease-in-out"
+                      onClick={deleteRestaurantImage}
+                    >
+                      <MdDelete className="text-white" />
+                    </button>
+                  </div>
+                </>
+              )}
+            </>
+          )}
+        </div>
+
+        <div className="w-full">
+          <h1 className="font-extrabold text-xl">Restaurant Image</h1>
         </div>
 
         <div className="w-full">
@@ -359,6 +445,24 @@ const CreateContainer = () => {
                   </option>
                 ))}
             </select>
+          </div>
+
+          <div className="w-full flex flex-col md:flex-row items-center gap-3">
+            {/* ... (existing calorie and price fields) */}
+
+            {/* Add a new field for Veg/Non-Veg */}
+            <div className="w-full py-2 border-b border-gray-300 flex items-center gap-2">
+              <MdFoodBank className="text-gray-700 text-2xl" />
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={isVegetarian}
+                  onChange={() => setIsVegetarian(!isVegetarian)}
+                  className="mr-2"
+                />
+                Vegetarian
+              </label>
+            </div>
           </div>
 
           <div className="group flex justify-center items-center flex-col border-2 border-dotted border-gray-300 w-full h-225 md:h-340 cursor-pointer rounded-lg">
