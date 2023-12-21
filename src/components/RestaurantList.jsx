@@ -76,8 +76,6 @@ const RestaurantList = () => {
     fetchData();
   }, []);
 
-  console.log(uniqueLocations);
-
   return (
     <div className="w-full">
       <div className="w-full flex justify-center items-center">

@@ -8,6 +8,7 @@ import RestaurantList from "./components/RestaurantList";
 import Footer from "./components/Footer";
 import AdminPage from "./components/AdminPage";
 import ViewRestaurant from "./components/ViewRestaurant";
+import EditForm from "./components/EditForm";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Route path="/add-restaurant" element={<CreateContainer />} />
             <Route path="/view-restaurants" element={<ViewRestaurant />} />
             <Route path="/menu" element={<RestaurantList />} />
+            <Route path="/edit/:id" element={<EditForm />} />
           </Routes>
           <ToastContainer />
         </main>
