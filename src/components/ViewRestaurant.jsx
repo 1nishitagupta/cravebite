@@ -70,9 +70,9 @@ const ViewRestaurant = () => {
       const bValue = b[sortCriteria];
 
       if (sortOrder === "asc") {
-        return aValue.localeCompare(bValue);
+        return aValue?.localeCompare(bValue);
       } else {
-        return bValue.localeCompare(aValue);
+        return bValue?.localeCompare(aValue);
       }
     });
 

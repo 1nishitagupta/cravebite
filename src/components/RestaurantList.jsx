@@ -45,7 +45,7 @@ const RestaurantList = () => {
     switch (option) {
       case "alphabetical":
         sortedItems.sort((a, b) =>
-          a.restaurant.localeCompare(b.restaurant, undefined, {
+          a?.restaurant?.localeCompare(b.restaurant, undefined, {
             sensitivity: "base",
           })
         );
@@ -58,7 +58,7 @@ const RestaurantList = () => {
         break;
       case "location":
         sortedItems.sort((a, b) =>
-          a.location.localeCompare(b.location, undefined, {
+          a?.location?.localeCompare(b.location, undefined, {
             sensitivity: "base",
           })
         );
