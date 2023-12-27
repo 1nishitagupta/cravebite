@@ -161,11 +161,11 @@ const CreateContainer = () => {
     goToTop();
     setIsLoading(true);
     try {
-      if (dishes?.length < 0) {
+      if (dishes?.length <= 0) {
         // Add a check for the restaurant field
         setFields(true);
-        setMsg("Required fields can't be empty");
-        errorToaster("Required fields can't be empty");
+        setMsg("At least 1 Dish is mandatory");
+        errorToaster("At least 1 Dish is mandatory");
         setAlertStatus("danger");
         setTimeout(() => {
           setFields(false);
@@ -549,7 +549,7 @@ const CreateContainer = () => {
               className="ml-0 md:ml-auto w-full md:w-auto border-none outline-none bg-emerald-500 px-12 py-2 rounded-lg text-lg text-white font-semibold"
               onClick={addDish}
             >
-              Save
+              Add Dish
             </button>
           </div>
         </div>
@@ -560,7 +560,7 @@ const CreateContainer = () => {
             className="ml-0 md:ml-auto w-full md:w-auto border-none outline-none bg-emerald-500 px-12 py-2 rounded-lg text-lg text-white font-semibold"
             onClick={saveDetails}
           >
-            Add Dish
+            Save
           </button>
         </div>
       </div>
