@@ -28,12 +28,60 @@ const EditForm = ({ data }) => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [editedData, setEditedData] = useState({
-    restaurantImage: data?.restaurantImage || "",
+    restaurantID: data?.restaurantID || `${Date.now()}`,
     restaurant: data?.restaurant || "",
+    restaurantImage: data?.restaurantImage || null,
     location: data?.location || "",
     categoriesInRestaurant: data?.categoriesInRestaurant || [],
     dishes: data?.dishes || [],
   });
+
+  const uploadRestaurantImage = (e) => {
+    setIsLoading(true);
+    const imageFile = e.target.files[0];
+    const storageRef = ref(
+      storage,
+      `RestaurantImages/${Date.now()}-${imageFile?.name}`
+    );
+    const uploadTask = uploadBytesResumable(storageRef, imageFile);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const uploadProgress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      },
+      (error) => {
+        // Handle error
+        setIsLoading(false);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setEditedData((prevData) => ({
+            ...prevData,
+            restaurantImage: downloadURL,
+          }));
+          setIsLoading(false);
+        });
+      }
+    );
+  };
+
+  const deleteRestaurantImage = () => {
+    setIsLoading(true);
+    const deleteRef = ref(storage, editedData?.restaurantImage);
+    deleteObject(deleteRef)
+      .then(() => {
+        setEditedData((prevData) => ({
+          ...prevData,
+          restaurantImage: null,
+        }));
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        setIsLoading(false);
+      });
+  };
 
   const uploadImage = async (e) => {
     setIsLoading(true);
@@ -67,7 +115,7 @@ const EditForm = ({ data }) => {
 
   const deleteImage = () => {
     setIsLoading(true);
-    const deleteRef = ref(storage, data?.restaurantImage);
+    const deleteRef = ref(storage, editedData?.restaurantImage);
     deleteObject(deleteRef)
       .then(() => {
         setEditedData((prevData) => ({
@@ -83,32 +131,48 @@ const EditForm = ({ data }) => {
   };
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
     setEditedData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [e.target.name]: e.target.value,
     }));
   };
 
-  // const handleDishChange = (index, field, value) => {
-  //   setEditedData((prevData) => {
-  //     const updatedDishes = [...prevData.dishes];
-  //     updatedDishes[index] = { ...updatedDishes[index], [field]: value };
-  //     return { ...prevData, dishes: updatedDishes };
-  //   });
-  // };
-
-  // const handleCategoryChange = (selectedCategories) => {
-  //   setEditedData((prevData) => ({
-  //     ...prevData,
-  //     categoriesInRestaurant: selectedCategories,
-  //   }));
-  // };
-
-  const saveEditedData = async () => {
-    console.log(editedData, "edited");
+  const handleDishInputChange = (index, e) => {
+    const updatedDishes = [...editedData.dishes];
+    updatedDishes[index] = {
+      ...updatedDishes[index],
+      [e.target.name]: e.target.value,
+    };
+    setEditedData((prevData) => ({
+      ...prevData,
+      dishes: updatedDishes,
+    }));
   };
-  // console.log(editedData, "data");
+
+  const saveEditedData = () => {
+    const example = {
+      restaurantID: editedData?.restaurantID,
+      restaurant: editedData?.restaurant,
+      restaurantImage: editedData?.restaurantImage,
+      location: editedData?.location,
+      categoriesInRestaurant: editedData?.categoriesInRestaurant,
+      dishes: editedData?.dishes.map((dish) => ({
+        id: dish.id || `${Date.now()}`, // Assuming each dish has an 'id' property
+        title: dish.title,
+        category: dish.category,
+        calories: dish.calories,
+        price: dish.price,
+        imageAsset: dish.imageAsset,
+        qty: 1,
+      })),
+    };
+
+    // Now 'example' contains the data in the desired format
+    console.log(example);
+
+    // Perform other actions with 'example' as needed
+  };
+
   return (
     <div className="w-full min-h-screen ">
       <div className="w-[90%] md:w-[100%] border border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center gap-4">
@@ -121,7 +185,7 @@ const EditForm = ({ data }) => {
             <Loader />
           ) : (
             <>
-              {!data.restaurantImage ? (
+              {!editedData.restaurantImage ? (
                 <>
                   <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer">
                     <div className="w-full h-full flex flex-col items-center justify-center gap-2">
@@ -143,7 +207,7 @@ const EditForm = ({ data }) => {
                 <>
                   <div className="relative h-full">
                     <img
-                      src={data?.restaurantImage}
+                      src={editedData?.restaurantImage}
                       alt="uploadedimage"
                       className="w-full h-full object-cover"
                     />
@@ -168,7 +232,8 @@ const EditForm = ({ data }) => {
         <div className="w-full">
           <select
             onChange={handleInputChange}
-            defaultValue={data?.restaurant}
+            defaultValue={editedData?.restaurant}
+            name="restaurant"
             className="outline-none w-full text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
           >
             <option value="other" className="bg-white">
@@ -190,7 +255,8 @@ const EditForm = ({ data }) => {
         <div className="w-full">
           <select
             onChange={handleInputChange}
-            defaultValue={data?.location}
+            name="location"
+            defaultValue={editedData?.location}
             className="outline-none w-full text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
           >
             <option value="other" className="bg-white">
@@ -225,11 +291,11 @@ const EditForm = ({ data }) => {
         <div className="w-full">
           <h1 className="font-extrabold	 text-xl">Add Dishes</h1>
         </div>
-        {data?.dishes.length > 0 && (
+        {editedData?.dishes.length > 0 && (
           <div className="w-full mt-4">
             <h2 className="font-bold text-lg mb-2">Added Dishes:</h2>
             <ul>
-              {data?.dishes.map((dish, index) => (
+              {editedData?.dishes.map((dish, index) => (
                 <li key={index}>
                   {dish.title} - {dish.category} - {dish.calories} calories - $
                   {dish.price}
@@ -238,7 +304,7 @@ const EditForm = ({ data }) => {
             </ul>
           </div>
         )}
-        {data?.dishes?.map((currentDish, index) => {
+        {editedData?.dishes?.map((currentDish, index) => {
           return (
             <React.Fragment key={index}>
               <div className="addDishes flex flex-col items-center justify-center gap-4">
