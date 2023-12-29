@@ -67,7 +67,7 @@ const EditForm = ({ data }) => {
 
   const deleteImage = () => {
     setIsLoading(true);
-    const deleteRef = ref(storage, editedData.restaurantImage);
+    const deleteRef = ref(storage, data?.restaurantImage);
     deleteObject(deleteRef)
       .then(() => {
         setEditedData((prevData) => ({
@@ -82,32 +82,33 @@ const EditForm = ({ data }) => {
       });
   };
 
-  const handleInputChange = (fieldName, value) => {
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
     setEditedData((prevData) => ({
       ...prevData,
-      [fieldName]: value,
+      [name]: value,
     }));
   };
 
-  const handleDishChange = (index, field, value) => {
-    setEditedData((prevData) => {
-      const updatedDishes = [...prevData.dishes];
-      updatedDishes[index] = { ...updatedDishes[index], [field]: value };
-      return { ...prevData, dishes: updatedDishes };
-    });
-  };
+  // const handleDishChange = (index, field, value) => {
+  //   setEditedData((prevData) => {
+  //     const updatedDishes = [...prevData.dishes];
+  //     updatedDishes[index] = { ...updatedDishes[index], [field]: value };
+  //     return { ...prevData, dishes: updatedDishes };
+  //   });
+  // };
 
-  const handleCategoryChange = (selectedCategories) => {
-    setEditedData((prevData) => ({
-      ...prevData,
-      categoriesInRestaurant: selectedCategories,
-    }));
-  };
+  // const handleCategoryChange = (selectedCategories) => {
+  //   setEditedData((prevData) => ({
+  //     ...prevData,
+  //     categoriesInRestaurant: selectedCategories,
+  //   }));
+  // };
 
   const saveEditedData = async () => {
-    console.log(editedData);
+    console.log(editedData, "edited");
   };
-  console.log(data);
+  // console.log(editedData, "data");
   return (
     <div className="w-full min-h-screen ">
       <div className="w-[90%] md:w-[100%] border border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center gap-4">
@@ -246,7 +247,8 @@ const EditForm = ({ data }) => {
                   <input
                     type="text"
                     required
-                    value={currentDish?.title}
+                    name="title"
+                    defaultValue={currentDish?.title}
                     onChange={handleInputChange}
                     placeholder="Give me a title..."
                     className="w-full h-full text-lg bg-transparent outline-none border-none placeholder:text-gray-400 text-textColor"

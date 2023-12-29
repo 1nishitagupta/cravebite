@@ -18,7 +18,9 @@ const ViewRestaurant = () => {
 
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const handleEdit = (id) => {
     setEditMode(id);
@@ -177,17 +179,11 @@ const ViewRestaurant = () => {
                   <td className="py-2 px-4 border-b">
                     <button
                       onClick={() => {
-                        handleEdit(item?.restaurantID);
+                        handleEdit(item);
                         handleOpen();
                       }}
                       className="bg-blue-500 text-white px-3 py-1 rounded-md mr-2 hover:bg-blue-600"
                     >
-                      <EditRestaurantModal
-                        open={open}
-                        handleClose={handleClose}
-                      >
-                        <EditForm data={item} />
-                      </EditRestaurantModal>
                       Edit
                     </button>
                     <button
@@ -203,6 +199,9 @@ const ViewRestaurant = () => {
           )}
         </tbody>
       </table>
+      <EditRestaurantModal open={open} handleClose={handleClose}>
+        <EditForm data={editMode} />
+      </EditRestaurantModal>
     </div>
   );
 };

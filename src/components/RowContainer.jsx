@@ -8,7 +8,7 @@ import { useStateValue } from "../context/StateProvider";
 import { actionType } from "../context/reducer";
 
 const RowContainer = ({ flag, data, scrollValue, restaurant }) => {
-  console.log(data, "pppppppppp");
+  
   const rowContainer = useRef();
 
   const [items, setItems] = useState([]);
