@@ -139,7 +139,7 @@ const Header = () => {
                 exit={{ opacity: 0, scale: 0.6 }}
                 className="w-40 bg-gray-50 top-12 -right-10 shadow-xl flex flex-col rounded-lg absolute"
               >
-                {user && user.email === "g.nishi9525@gmail.com" && (
+                {/* {user && user.email === "g.nishi9525@gmail.com" && (
                   <Link to="/createItem">
                     <p
                       onClick={() => setIsMenu(false)}
@@ -148,7 +148,15 @@ const Header = () => {
                       New Item <MdAdd />
                     </p>
                   </Link>
-                )}
+                )} */}
+                <Link to="/createItem">
+                  <p
+                    onClick={() => setIsMenu(false)}
+                    className="px-4 py-2 flex items gap-3 cursor-pointer hover:bg-slate-200 transition-all duration-100 ease-in-out text-textColor text-base hover:rounded-lg"
+                  >
+                    New Item <MdAdd />
+                  </p>
+                </Link>
                 <p
                   className="m-2 p-2 flex items gap-3 justify-center bg-slate-100 cursor-pointer hover:bg-gray-300 transition-all duration-100 ease-in-out text-textColor text-base hover:rounded-lg rounded-md shadow-md"
                   onClick={logout}
@@ -198,7 +206,7 @@ const Header = () => {
                 exit={{ opacity: 0, scale: 0.6 }}
                 className="w-40 bg-gray-50 top-12 -right-2 shadow-xl flex flex-col rounded-lg absolute"
               >
-                {user && user.email === "g.nishi9525@gmail.com" && (
+                {/* {user && user.email === "g.nishi9525@gmail.com" && (
                   <Link to="/createItem">
                     <p
                       onClick={() => setIsMenu(false)}
@@ -207,7 +215,15 @@ const Header = () => {
                       New Item <MdAdd />
                     </p>
                   </Link>
-                )}
+                )} */}
+                <Link to="/createItem">
+                  <p
+                    onClick={() => setIsMenu(false)}
+                    className="px-4 py-2 flex items gap-3 cursor-pointer hover:bg-slate-200 transition-all duration-100 ease-in-out text-textColor text-base hover:rounded-lg"
+                  >
+                    New Item <MdAdd />
+                  </p>
+                </Link>
                 <ul className="flex flex-col ">
                   <Link
                     to="/"
