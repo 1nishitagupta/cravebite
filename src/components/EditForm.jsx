@@ -172,12 +172,13 @@ const EditForm = ({ data }) => {
     };
 
     // Now 'example' contains the data in the desired format
-    console.log(example);
 
     // Perform other actions with 'example' as needed
   };
 
-  console.log(dishId);
+  const editArr = editedData?.dishes?.filter(
+    (currentDish) => currentDish?.id === dishId
+  );
   return (
     <div className="w-full min-h-screen ">
       <div className="w-[90%] md:w-[100%] border border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center gap-4">
@@ -305,15 +306,17 @@ const EditForm = ({ data }) => {
                 key={index}
                 onClick={() => {
                   setDishId(currentDish);
-                  setDishForm(!dishForm);
+                  setDishForm(true);
                 }}
               >
-                <div>{currentDish?.title}</div>
-                {dishForm ? <DishForm currentDish={currentDish} /> : ""}
+                <div>
+                  {currentDish?.title} id - {currentDish?.id}
+                </div>
               </div>
             );
           })}
         </div>
+        {dishForm && <DishForm currentDish={dishId} />}
 
         <div className="flex items-center w-full">
           <button

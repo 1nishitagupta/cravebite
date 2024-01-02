@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import {
   MdFastfood,
@@ -8,8 +9,23 @@ import {
 } from "react-icons/md";
 import { categories } from "../utils/data";
 import Loader from "./Loader";
+import { useEffect, useState } from "react";
 export const DishForm = ({ currentDish }) => {
   const handleInputChange = () => {};
+
+  const [dishData, setDishData] = useState({
+    id: currentDish?.id,
+    title: currentDish?.title,
+    category: currentDish?.category,
+    calories: currentDish?.calories,
+    price: currentDish?.price,
+    imageAsset: currentDish?.imageAsset,
+    qty: currentDish?.qty,
+  });
+
+  useEffect(() => {
+    setDishData(currentDish);
+  }, [currentDish]);
 
   return (
     <div className="addDishes flex flex-col items-center justify-center gap-4">
@@ -19,7 +35,7 @@ export const DishForm = ({ currentDish }) => {
           type="text"
           required
           name="title"
-          defaultValue={currentDish?.title}
+          value={dishData?.title}
           onChange={handleInputChange}
           placeholder="Give me a title..."
           className="w-full h-full text-lg bg-transparent outline-none border-none placeholder:text-gray-400 text-textColor"
@@ -29,7 +45,7 @@ export const DishForm = ({ currentDish }) => {
       <div className="w-full">
         <select
           onChange={handleInputChange}
-          value={currentDish?.category}
+          value={dishData?.category}
           className="outline-none w-full text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
         >
           <option value="other" className="bg-white">
@@ -55,7 +71,7 @@ export const DishForm = ({ currentDish }) => {
           <label className="flex items-center">
             <input
               type="checkbox"
-              checked={currentDish?.isVegetarian}
+              checked={dishData?.isVegetarian}
               onChange={handleInputChange}
               className="mr-2"
             />
@@ -65,11 +81,11 @@ export const DishForm = ({ currentDish }) => {
       </div>
 
       <div className="group flex justify-center items-center flex-col border-2 border-dotted border-gray-300 w-full h-225 md:h-340 cursor-pointer rounded-lg">
-        {currentDish?.length > 0 ? (
+        {dishData?.length > 0 ? (
           <Loader />
         ) : (
           <>
-            {!currentDish?.imageAsset ? (
+            {!dishData?.imageAsset ? (
               <>
                 <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer">
                   <div className="w-full h-full flex flex-col items-center justify-center gap-2">
@@ -91,7 +107,7 @@ export const DishForm = ({ currentDish }) => {
               <>
                 <div className="relative h-full">
                   <img
-                    src={currentDish?.imageAsset}
+                    src={dishData?.imageAsset}
                     alt="uploadedimage"
                     className="w-full h-full object-cover"
                   />
@@ -115,7 +131,7 @@ export const DishForm = ({ currentDish }) => {
           <input
             type="text"
             required
-            value={currentDish?.calories}
+            value={dishData?.calories}
             onChange={handleInputChange}
             placeholder="Calories"
             className="w-full h-full text-lg bg-transparent outline-none border-none placeholder:text-gray-400 text-textColor"
@@ -127,7 +143,7 @@ export const DishForm = ({ currentDish }) => {
           <input
             type="text"
             required
-            value={currentDish?.price}
+            value={dishData?.price}
             onChange={handleInputChange}
             placeholder="Price"
             className="w-full h-full text-lg bg-transparent outline-none border-none placeholder:text-gray-400 text-textColor"

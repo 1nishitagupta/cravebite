@@ -207,6 +207,7 @@ const CreateContainer = () => {
 
   const clearData = () => {
     setCurrentDish({
+      id: "",
       title: "",
       category: "",
       calories: "",
@@ -254,6 +255,7 @@ const CreateContainer = () => {
     // Add the current dish to the dishes array
     setDishes([...dishes, { ...currentDish, isVegetarian }]);
     setCurrentDish({
+      id: `${Date.now()}`,
       title: "",
       category: "",
       calories: "",

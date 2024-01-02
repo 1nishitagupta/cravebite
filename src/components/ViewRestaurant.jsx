@@ -82,8 +82,6 @@ const ViewRestaurant = () => {
     fetchData();
   }, []);
 
-  console.log(uniqueLocations);
-
   return (
     <div className="overflow-x-auto">
       {foodItems?.length <= 0 || undefined ? (
