@@ -10,18 +10,85 @@ import {
 import { categories } from "../utils/data";
 import Loader from "./Loader";
 import { useEffect, useState } from "react";
-export const DishForm = ({ currentDish }) => {
-  const handleInputChange = () => {};
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import DummyImage from "../assets/images/chef1.png";
+import { storage } from "../firebase.config";
 
-  const [dishData, setDishData] = useState({
-    id: currentDish?.id,
-    title: currentDish?.title,
-    category: currentDish?.category,
-    calories: currentDish?.calories,
-    price: currentDish?.price,
-    imageAsset: currentDish?.imageAsset,
-    qty: currentDish?.qty,
-  });
+export const DishForm = ({ currentDish }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [dishData, setDishData] = useState({});
+
+  const uploadImage = async (e) => {
+    setIsLoading(true);
+    const imageFile = e.target.files[0];
+    const storageRef = ref(storage, `Images/${Date.now()}-${imageFile?.name}`);
+    const uploadTask = uploadBytesResumable(storageRef, imageFile);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const uploadProgress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        // Update UI with the upload progress if needed
+      },
+      (error) => {
+        // Handle error
+        setIsLoading(false);
+        console.error("Error uploading image:", error);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setDishData((prevData) => ({
+            ...prevData,
+            imageAsset: downloadURL,
+          }));
+          setIsLoading(false);
+        });
+      }
+    );
+  };
+
+  const deleteImage = () => {
+    setIsLoading(true);
+    const deleteRef = ref(storage, dishData?.imageAsset);
+    deleteObject(deleteRef)
+      .then(() => {
+        setDishData((prevData) => ({
+          ...prevData,
+          imageAsset: "",
+        }));
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        console.error("Error deleting image:", error);
+      });
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+
+    // Handle different input types
+    const newValue = type === "checkbox" ? checked : value;
+
+    console.log(name, ":", newValue, "new value");
+
+    setDishData((prevData) => ({
+      ...prevData,
+      [name]: newValue,
+    }));
+  };
+
+  console.log(dishData);
+
+  const saveDish = () => {
+    console.log(dishData, "saved data");
+  };
 
   useEffect(() => {
     setDishData(currentDish);
@@ -35,7 +102,7 @@ export const DishForm = ({ currentDish }) => {
           type="text"
           required
           name="title"
-          value={dishData?.title}
+          defaultValue={dishData?.title}
           onChange={handleInputChange}
           placeholder="Give me a title..."
           className="w-full h-full text-lg bg-transparent outline-none border-none placeholder:text-gray-400 text-textColor"
@@ -45,7 +112,8 @@ export const DishForm = ({ currentDish }) => {
       <div className="w-full">
         <select
           onChange={handleInputChange}
-          value={dishData?.category}
+          defaultValue={dishData?.category}
+          name="category"
           className="outline-none w-full text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
         >
           <option value="other" className="bg-white">
@@ -71,7 +139,8 @@ export const DishForm = ({ currentDish }) => {
           <label className="flex items-center">
             <input
               type="checkbox"
-              checked={dishData?.isVegetarian}
+              name="isVegetarian"
+              defaultChecked={dishData?.isVegetarian}
               onChange={handleInputChange}
               className="mr-2"
             />
@@ -81,7 +150,7 @@ export const DishForm = ({ currentDish }) => {
       </div>
 
       <div className="group flex justify-center items-center flex-col border-2 border-dotted border-gray-300 w-full h-225 md:h-340 cursor-pointer rounded-lg">
-        {dishData?.length > 0 ? (
+        {isLoading ? (
           <Loader />
         ) : (
           <>
@@ -98,7 +167,7 @@ export const DishForm = ({ currentDish }) => {
                     type="file"
                     name="uploadimage"
                     accept="image/*"
-                    // onChange={uploadImage}
+                    onChange={uploadImage}
                     className="w-0 h-0"
                   />
                 </label>
@@ -114,7 +183,7 @@ export const DishForm = ({ currentDish }) => {
                   <button
                     type="button"
                     className="absolute bottom-3 right-3 p-3 rounded-full bg-red-500 text-xl cursor-pointer outline-none hover:shadow-md  duration-500 transition-all ease-in-out"
-                    // onClick={deleteImage}
+                    onClick={deleteImage}
                   >
                     <MdDelete className="text-white" />
                   </button>
@@ -131,7 +200,8 @@ export const DishForm = ({ currentDish }) => {
           <input
             type="text"
             required
-            value={dishData?.calories}
+            name="calories"
+            defaultValue={dishData?.calories}
             onChange={handleInputChange}
             placeholder="Calories"
             className="w-full h-full text-lg bg-transparent outline-none border-none placeholder:text-gray-400 text-textColor"
@@ -143,12 +213,23 @@ export const DishForm = ({ currentDish }) => {
           <input
             type="text"
             required
-            value={dishData?.price}
+            defaultValue={dishData?.price}
             onChange={handleInputChange}
+            name="price"
             placeholder="Price"
             className="w-full h-full text-lg bg-transparent outline-none border-none placeholder:text-gray-400 text-textColor"
           />
         </div>
+      </div>
+
+      <div className="flex items-center w-full">
+        <button
+          type="button"
+          className="ml-0 md:ml-auto w-full md:w-auto border-none outline-none bg-emerald-500 px-12 py-2 rounded-lg text-lg text-white font-semibold"
+          onClick={saveDish}
+        >
+          Save Data
+        </button>
       </div>
     </div>
   );

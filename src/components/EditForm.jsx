@@ -1,19 +1,10 @@
-/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import {
-  MdFastfood,
-  MdCloudUpload,
-  MdDelete,
-  MdFoodBank,
-  MdAttachMoney,
-} from "react-icons/md";
-import { categories, cityList, restaurantList } from "../utils/data";
+/* eslint-disable react/prop-types */
+
+import { MdCloudUpload, MdDelete } from "react-icons/md";
+import { cityList, restaurantList } from "../utils/data";
 import Loader from "./Loader";
-import { useParams } from "react-router-dom";
-import { getAllFoodItems } from "../utils/firebaseFunctions";
-import { useStateValue } from "../context/StateProvider";
-import { actionType } from "../context/reducer";
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   deleteObject,
   getDownloadURL,
@@ -24,9 +15,6 @@ import { storage } from "../firebase.config";
 import { DishForm } from "./DishForm";
 
 const EditForm = ({ data }) => {
-  const [{ user }, dispatch] = useStateValue();
-  const { id } = useParams();
-
   const [dishId, setDishId] = useState(null);
   const [dishForm, setDishForm] = useState(false);
 
@@ -87,69 +75,10 @@ const EditForm = ({ data }) => {
       });
   };
 
-  const uploadImage = async (e) => {
-    setIsLoading(true);
-    const imageFile = e.target.files[0];
-    const storageRef = ref(storage, `Images/${Date.now()}-${imageFile?.name}`);
-    const uploadTask = uploadBytesResumable(storageRef, imageFile);
-
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const uploadProgress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        // Update UI with the upload progress if needed
-      },
-      (error) => {
-        // Handle error
-        setIsLoading(false);
-        console.error("Error uploading image:", error);
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          setEditedData((prevData) => ({
-            ...prevData,
-            restaurantImage: downloadURL,
-          }));
-          setIsLoading(false);
-        });
-      }
-    );
-  };
-
-  const deleteImage = () => {
-    setIsLoading(true);
-    const deleteRef = ref(storage, editedData?.restaurantImage);
-    deleteObject(deleteRef)
-      .then(() => {
-        setEditedData((prevData) => ({
-          ...prevData,
-          restaurantImage: "",
-        }));
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        setIsLoading(false);
-        console.error("Error deleting image:", error);
-      });
-  };
-
   const handleInputChange = (e) => {
     setEditedData((prevData) => ({
       ...prevData,
       [e.target.name]: e.target.value,
-    }));
-  };
-
-  const handleDishInputChange = (index, e) => {
-    const updatedDishes = [...editedData.dishes];
-    updatedDishes[index] = {
-      ...updatedDishes[index],
-      [e.target.name]: e.target.value,
-    };
-    setEditedData((prevData) => ({
-      ...prevData,
-      dishes: updatedDishes,
     }));
   };
 
@@ -160,25 +89,20 @@ const EditForm = ({ data }) => {
       restaurantImage: editedData?.restaurantImage,
       location: editedData?.location,
       categoriesInRestaurant: editedData?.categoriesInRestaurant,
-      dishes: editedData?.dishes.map((dish) => ({
-        id: dish.id || `${Date.now()}`, // Assuming each dish has an 'id' property
-        title: dish.title,
-        category: dish.category,
-        calories: dish.calories,
-        price: dish.price,
-        imageAsset: dish.imageAsset,
-        qty: 1,
-      })),
+      // dishes: editedData?.dishes.map((dish) => ({
+      //   id: dish.id,
+      //   title: dish.title,
+      //   category: dish.category,
+      //   calories: dish.calories,
+      //   price: dish.price,
+      //   imageAsset: dish.imageAsset,
+      //   qty: 1,
+      // })),
     };
 
-    // Now 'example' contains the data in the desired format
-
-    // Perform other actions with 'example' as needed
+    console.log(example, "example saved data");
   };
 
-  const editArr = editedData?.dishes?.filter(
-    (currentDish) => currentDish?.id === dishId
-  );
   return (
     <div className="w-full min-h-screen ">
       <div className="w-[90%] md:w-[100%] border border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center gap-4">
@@ -204,7 +128,7 @@ const EditForm = ({ data }) => {
                       type="file"
                       name="uploadRestaurantImage"
                       accept="image/*"
-                      onChange={uploadImage}
+                      onChange={uploadRestaurantImage}
                       className="w-0 h-0"
                     />
                   </label>
@@ -220,7 +144,7 @@ const EditForm = ({ data }) => {
                     <button
                       type="button"
                       className="absolute bottom-3 right-3 p-3 rounded-full bg-red-500 text-xl cursor-pointer outline-none hover:shadow-md duration-500 transition-all ease-in-out"
-                      onClick={deleteImage}
+                      onClick={deleteRestaurantImage}
                     >
                       <MdDelete className="text-white" />
                     </button>
@@ -325,7 +249,7 @@ const EditForm = ({ data }) => {
             // onClick={saveDetails}
             onClick={saveEditedData}
           >
-            Add Dish
+            Save Data
           </button>
         </div>
       </div>
