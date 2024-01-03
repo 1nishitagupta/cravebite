@@ -32,3 +32,4 @@ export const editItem = async (itemId, newData) => {
     console.error("Error updating document: ", error);
   }
 };
+
