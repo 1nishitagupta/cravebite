@@ -23,5 +23,23 @@ export const example = {
       imageAsset: null,
       qty: 1,
     },
+    {
+      id: `${Date.now()}`,
+      title: "",
+      category: "",
+      calories: "",
+      price: "",
+      imageAsset: null,
+      qty: 1,
+    },
+    {
+      id: `${Date.now()}`,
+      title: "",
+      category: "",
+      calories: "",
+      price: "",
+      imageAsset: null,
+      qty: 1,
+    },
   ],
 };
