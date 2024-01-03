@@ -18,7 +18,6 @@ export const saveItem = async (data) => {
 // getall food items
 export const getAllFoodItems = async () => {
   const items = await getDocs(query(collection(firestore, "foodItems")));
-
   return items.docs.map((doc) => doc.data());
 };
 
@@ -32,4 +31,3 @@ export const editItem = async (itemId, newData) => {
     console.error("Error updating document: ", error);
   }
 };
-
