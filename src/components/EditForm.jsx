@@ -13,6 +13,7 @@ import {
 } from "firebase/storage";
 import { storage } from "../firebase.config";
 import { DishForm } from "./DishForm";
+import { editItem } from "../utils/firebaseFunctions";
 
 const EditForm = ({ data }) => {
   const [dishId, setDishId] = useState(null);
@@ -27,6 +28,7 @@ const EditForm = ({ data }) => {
     categoriesInRestaurant: data?.categoriesInRestaurant || [],
     dishes: data?.dishes || [],
   });
+  const [dishData, setDishData] = useState({});
 
   const uploadRestaurantImage = (e) => {
     setIsLoading(true);
@@ -89,18 +91,10 @@ const EditForm = ({ data }) => {
       restaurantImage: editedData?.restaurantImage,
       location: editedData?.location,
       categoriesInRestaurant: editedData?.categoriesInRestaurant,
-      // dishes: editedData?.dishes.map((dish) => ({
-      //   id: dish.id,
-      //   title: dish.title,
-      //   category: dish.category,
-      //   calories: dish.calories,
-      //   price: dish.price,
-      //   imageAsset: dish.imageAsset,
-      //   qty: 1,
-      // })),
+      dishes: [editedData?.dishes, dishData],
     };
 
-    console.log(example, "example saved data");
+    editItem(example);
   };
 
   return (
@@ -240,7 +234,13 @@ const EditForm = ({ data }) => {
             );
           })}
         </div>
-        {dishForm && <DishForm currentDish={dishId} />}
+        {dishForm && (
+          <DishForm
+            currentDish={dishId}
+            dishData={dishData}
+            setDishData={setDishData}
+          />
+        )}
 
         <div className="flex items-center w-full">
           <button

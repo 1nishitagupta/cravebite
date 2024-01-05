@@ -1,3 +1,4 @@
+/* eslint-disable no-debugger */
 import {
   collection,
   doc,
@@ -21,12 +22,29 @@ export const getAllFoodItems = async () => {
   return items.docs.map((doc) => doc.data());
 };
 
-export const editItem = async (itemId, newData) => {
-  const itemRef = doc(firestore, "foodItems", itemId);
+// export const editItem = async (item) => {
+//   const itemRef = doc(firestore, "foodItems", item?.restaurantID);
+//   console.log(itemRef, "itemRef");
+
+//   try {
+//     return await updateDoc(itemRef, item);
+//   } catch (error) {
+//     console.error("Error updating document: ", error);
+//   }
+// };
+
+export const editItem = async (item) => {
+  const itemRef = doc(firestore, "foodItems", item?.restaurantID);
 
   try {
-    await updateDoc(itemRef, newData);
-    console.log("Document successfully updated!");
+    // Specify the path to the specific property you want to update
+    const nestedFieldPath = "dishes.0.title"; // Update the first dish's title as an example
+    const nestedFieldValue = "New Title"; // Replace with your actual new value
+
+    // Use the updateDoc function with field paths
+    return await updateDoc(itemRef, {
+      [nestedFieldPath]: nestedFieldValue,
+    });
   } catch (error) {
     console.error("Error updating document: ", error);
   }

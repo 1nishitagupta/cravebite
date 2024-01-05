@@ -19,9 +19,8 @@ import {
 import DummyImage from "../assets/images/chef1.png";
 import { storage } from "../firebase.config";
 
-export const DishForm = ({ currentDish }) => {
+export const DishForm = ({ currentDish, dishData, setDishData }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [dishData, setDishData] = useState({});
 
   const uploadImage = async (e) => {
     setIsLoading(true);
@@ -76,19 +75,13 @@ export const DishForm = ({ currentDish }) => {
     // Handle different input types
     const newValue = type === "checkbox" ? checked : value;
 
-    console.log(name, ":", newValue, "new value");
-
     setDishData((prevData) => ({
       ...prevData,
       [name]: newValue,
     }));
   };
 
-  console.log(dishData);
-
-  const saveDish = () => {
-    console.log(dishData, "saved data");
-  };
+  const saveDish = () => {};
 
   useEffect(() => {
     setDishData(currentDish);
@@ -112,7 +105,7 @@ export const DishForm = ({ currentDish }) => {
       <div className="w-full">
         <select
           onChange={handleInputChange}
-          defaultValue={dishData?.category}
+          value={dishData?.category}
           name="category"
           className="outline-none w-full text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
         >
