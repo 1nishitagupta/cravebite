@@ -37,7 +37,7 @@ const ViewRestaurant = () => {
         type: actionType.SET_FOOD_ITEMS,
         foodItems: data,
       });
-      const locations = data.map((item) => item.location);
+      const locations = data?.map((item) => item.location);
       setUniqueLocations([...new Set(locations)]);
     });
   };
@@ -89,7 +89,7 @@ const ViewRestaurant = () => {
       ) : (
         <div className="mb-4 flex gap-2">
           <span className="text-gray-700">Filter by Location:</span>
-          {uniqueLocations.map((location, index) => (
+          {uniqueLocations?.map((location, index) => (
             <label key={index} className="inline-flex items-center">
               <input
                 type="checkbox"
@@ -145,7 +145,7 @@ const ViewRestaurant = () => {
                   <td className="py-2 px-4 border-b">{item.location}</td>
                   <td className="py-2 px-4 border-b">
                     <div className="flex gap-4">
-                      {item.categoriesInRestaurant.map((category) => (
+                      {item.categoriesInRestaurant?.map((category) => (
                         <div
                           className="bg-gray-200 p-1 rounded-md text-sm mr-1 "
                           key={category.id}
@@ -157,7 +157,7 @@ const ViewRestaurant = () => {
                   </td>
                   <td className="py-2 px-4 border-b">
                     <div className="flex flex-wrap gap-2">
-                      {item.dishes.map((dish, dishIndex) => (
+                      {item?.dishes?.map((dish, dishIndex) => (
                         <div
                           key={dishIndex}
                           className="bg-gray-200 p-2 rounded-md text-sm border border-gray-300 relative pr-6"
