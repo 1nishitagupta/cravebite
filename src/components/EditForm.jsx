@@ -14,11 +14,12 @@ import {
 import { storage } from "../firebase.config";
 import { DishForm } from "./DishForm";
 import { editItem } from "../utils/firebaseFunctions";
+import { successToaster } from "../utils/toastify";
 
 const EditForm = ({ data, saveEditedData }) => {
   const [dishId, setDishId] = useState(null);
   const [dishForm, setDishForm] = useState(false);
-
+  const [dishData, setDishData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [editedData, setEditedData] = useState({
     restaurantID: data?.restaurantID || `${Date.now()}`,
@@ -28,7 +29,6 @@ const EditForm = ({ data, saveEditedData }) => {
     categoriesInRestaurant: data?.categoriesInRestaurant || [],
     dishes: data?.dishes || [],
   });
-  const [dishData, setDishData] = useState({});
 
   const uploadRestaurantImage = (e) => {
     setIsLoading(true);
@@ -82,6 +82,16 @@ const EditForm = ({ data, saveEditedData }) => {
       ...prevData,
       [e.target.name]: e.target.value,
     }));
+  };
+
+  const saveDish = () => {
+    const filteredDishArr = editedData?.dishes?.filter(
+      (item) => item.id !== dishData?.id
+    );
+    setEditedData({ ...editedData, dishes: [...filteredDishArr, dishData] });
+    console.log(filteredDishArr, "filteredDishArr");
+
+    successToaster("Dish Updated Successfully");
   };
 
   return (
@@ -226,6 +236,7 @@ const EditForm = ({ data, saveEditedData }) => {
             currentDish={dishId}
             dishData={dishData}
             setDishData={setDishData}
+            saveDish={saveDish}
           />
         )}
 

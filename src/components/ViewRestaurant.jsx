@@ -78,6 +78,22 @@ const ViewRestaurant = () => {
       }
     });
 
+  const removeFirstObjectWithId = (array, idToRemove) => {
+    const indexToRemove = array.findIndex((item) => item.id === idToRemove);
+
+    if (indexToRemove !== -1) {
+      // Use slice to create a new array excluding the element to remove
+      const newArray = [
+        ...array.slice(0, indexToRemove),
+        ...array.slice(indexToRemove + 1),
+      ];
+      return newArray;
+    }
+
+    // Return the original array if the id is not found
+    return array;
+  };
+
   const saveEditedData = (editedData) => {
     const example = {
       restaurantID: editedData?.restaurantID,
@@ -85,10 +101,12 @@ const ViewRestaurant = () => {
       restaurantImage: editedData?.restaurantImage,
       location: editedData?.location,
       categoriesInRestaurant: editedData?.categoriesInRestaurant,
-      // dishes: [editedData?.dishes, dishData],
+      dishes: editedData?.dishes,
     };
 
-    editItem(example);
+    console.log(example, "example");
+
+    // editItem(example);
     handleClose();
     fetchData();
   };

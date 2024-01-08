@@ -19,7 +19,7 @@ import {
 import DummyImage from "../assets/images/chef1.png";
 import { storage } from "../firebase.config";
 
-export const DishForm = ({ currentDish, dishData, setDishData }) => {
+export const DishForm = ({ currentDish, dishData, setDishData, saveDish }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const uploadImage = async (e) => {
@@ -81,8 +81,6 @@ export const DishForm = ({ currentDish, dishData, setDishData }) => {
     }));
   };
 
-  const saveDish = () => {};
-
   useEffect(() => {
     setDishData(currentDish);
   }, [currentDish]);
@@ -95,7 +93,7 @@ export const DishForm = ({ currentDish, dishData, setDishData }) => {
           type="text"
           required
           name="title"
-          defaultValue={dishData?.title}
+          value={dishData?.title}
           onChange={handleInputChange}
           placeholder="Give me a title..."
           className="w-full h-full text-lg bg-transparent outline-none border-none placeholder:text-gray-400 text-textColor"
@@ -133,7 +131,7 @@ export const DishForm = ({ currentDish, dishData, setDishData }) => {
             <input
               type="checkbox"
               name="isVegetarian"
-              defaultChecked={dishData?.isVegetarian}
+              checked={dishData?.isVegetarian}
               onChange={handleInputChange}
               className="mr-2"
             />
@@ -194,7 +192,7 @@ export const DishForm = ({ currentDish, dishData, setDishData }) => {
             type="text"
             required
             name="calories"
-            defaultValue={dishData?.calories}
+            value={dishData?.calories}
             onChange={handleInputChange}
             placeholder="Calories"
             className="w-full h-full text-lg bg-transparent outline-none border-none placeholder:text-gray-400 text-textColor"
@@ -206,7 +204,7 @@ export const DishForm = ({ currentDish, dishData, setDishData }) => {
           <input
             type="text"
             required
-            defaultValue={dishData?.price}
+            value={dishData?.price}
             onChange={handleInputChange}
             name="price"
             placeholder="Price"
@@ -221,7 +219,7 @@ export const DishForm = ({ currentDish, dishData, setDishData }) => {
           className="ml-0 md:ml-auto w-full md:w-auto border-none outline-none bg-emerald-500 px-12 py-2 rounded-lg text-lg text-white font-semibold"
           onClick={saveDish}
         >
-          Save Data
+          Save Dish
         </button>
       </div>
     </div>
