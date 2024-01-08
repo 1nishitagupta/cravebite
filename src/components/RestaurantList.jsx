@@ -139,7 +139,7 @@ const RestaurantList = () => {
                     animate={{ opacity: 1 }}
                     transition={{ delay: 1 }}
                   >
-                    <motion.div className="flex text-sm gap-2">
+                    <motion.div className="flex text-sm gap-2 flex-wrap">
                       {item?.categoriesInRestaurant?.map(({ name, id }) => (
                         <motion.div
                           key={id}

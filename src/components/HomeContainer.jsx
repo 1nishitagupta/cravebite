@@ -2,6 +2,7 @@ import { heroData } from "../utils/data";
 import HeroBg from "../assets/images/heroBg.png";
 import Delivery from "../assets/images/delivery.png";
 import { Link } from "react-router-dom";
+import ImageWithFallback from "./ImageComponent";
 
 const HomeContainer = () => {
   return (
@@ -15,7 +16,7 @@ const HomeContainer = () => {
             Bike Delivery
           </p>
           <div className="w-8 h-8 bg-white rounded-full overflow-hidden drop-shadow-xl">
-            <img
+            <ImageWithFallback
               src={Delivery}
               className="w-full h-full object-contain"
               alt="delivery"
@@ -45,7 +46,7 @@ const HomeContainer = () => {
         </Link>
       </div>
       <div className="py-2 flex-1 flex items-center relative">
-        <img
+        <ImageWithFallback
           src={HeroBg}
           className=" ml-auto h-420 w-full lg:w-auto lg:h-650"
           alt="hero-bg"
@@ -58,7 +59,7 @@ const HomeContainer = () => {
                 key={n.id}
                 className="  lg:w-190  p-4 bg-cardOverlay backdrop-blur-md rounded-3xl flex flex-col items-center justify-center drop-shadow-lg"
               >
-                <img
+                <ImageWithFallback
                   src={n.imageSrc}
                   className="w-20 lg:w-40 -mt-10 lg:-mt-20 "
                   alt="I1"

@@ -13,6 +13,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { successToaster } from "../utils/toastify";
 import goToTop from "../utils/goToTop";
+import ImageWithFallback from "./ImageComponent";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -65,7 +66,7 @@ const Header = () => {
       <div className="hidden md:flex w-full h-full items-center justify-between ">
         <div>
           <Link to={"/"} className="flex items-center gap-2">
-            <img
+            <ImageWithFallback
               src={Logo}
               alt=""
               className="w-8 object-cover"

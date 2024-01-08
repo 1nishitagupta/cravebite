@@ -36,6 +36,7 @@ const ViewRestaurant = () => {
     // Implement your delete logic here
     alert("Are You Sure To Delete");
     deleteItem(item?.restaurantID);
+    fetchData();
   };
 
   const fetchData = async () => {
@@ -184,7 +185,7 @@ const ViewRestaurant = () => {
                   <td className="py-2 px-4 border-b">{item.restaurant}</td>
                   <td className="py-2 px-4 border-b">{item.location}</td>
                   <td className="py-2 px-4 border-b">
-                    <div className="flex gap-4">
+                    <div className="flex gap-4 flex-wrap">
                       {item.categoriesInRestaurant?.map((category) => (
                         <div
                           className="bg-gray-200 p-1 rounded-md text-sm mr-1 "
@@ -216,22 +217,24 @@ const ViewRestaurant = () => {
                       ))}
                     </div>
                   </td>
-                  <td className="py-2 px-4 border-b">
-                    <button
-                      onClick={() => {
-                        handleEdit(item);
-                        handleOpen();
-                      }}
-                      className="bg-blue-500 text-white px-3 py-1 rounded-md mr-2 hover:bg-blue-600"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(item)}
-                      className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600"
-                    >
-                      Delete
-                    </button>
+                  <td className="py-2 px-4 border-b ">
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          handleEdit(item);
+                          handleOpen();
+                        }}
+                        className="bg-blue-500 text-white px-3 py-1 rounded-md mr-2 hover:bg-blue-600"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(item)}
+                        className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

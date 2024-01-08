@@ -7,6 +7,7 @@ import { useStateValue } from "../context/StateProvider";
 import { actionType } from "../context/reducer";
 import EmptyCart from "../assets/images/emptyCart.svg";
 import CartItem from "./CartItem";
+import ImageWithFallback from "./ImageComponent";
 
 const CartContainer = () => {
   const [{ cartShow, cartItems, user }, dispatch] = useStateValue();
@@ -117,7 +118,7 @@ const CartContainer = () => {
         </div>
       ) : (
         <div className="w-full h-full flex flex-col items-center justify-center gap-6">
-          <img src={EmptyCart} className="w-300" alt="" />
+          <ImageWithFallback src={EmptyCart} className="w-300" alt="" />
           <p className="text-xl text-textColor font-semibold">
             Add some items to your cart
           </p>

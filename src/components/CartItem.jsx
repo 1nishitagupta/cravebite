@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { useStateValue } from "../context/StateProvider";
 import { actionType } from "../context/reducer";
 import { fetchCart } from "../utils/fetchLocalStorageData";
+import ImageWithFallback from "./ImageComponent";
 let items = [];
 
 const CartItem = ({ item, setFlag, flag }) => {
@@ -55,7 +56,7 @@ const CartItem = ({ item, setFlag, flag }) => {
 
   return (
     <div className="w-full p-1 px-2 rounded-lg bg-cartItem flex items-center gap-2">
-      <img
+      <ImageWithFallback
         src={item?.imageAsset}
         className="w-20 h-20 max-w-[60px] rounded-full object-contain"
         alt=""

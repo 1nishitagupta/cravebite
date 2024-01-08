@@ -160,12 +160,15 @@ const CreateContainer = () => {
   const saveDetails = () => {
     goToTop();
     setIsLoading(true);
+
     try {
-      if (dishes?.length <= 0) {
-        // Add a check for the restaurant field
+      // Check if required fields are empty
+      if (!restaurant || !location || !dishes || dishes.length === 0) {
         setFields(true);
-        setMsg("At least 1 Dish is mandatory");
-        errorToaster("At least 1 Dish is mandatory");
+        setMsg("Please fill in all required fields and add at least 1 dish");
+        errorToaster(
+          "Please fill in all required fields and add at least 1 dish"
+        );
         setAlertStatus("danger");
         setTimeout(() => {
           setFields(false);
@@ -180,6 +183,7 @@ const CreateContainer = () => {
           categoriesInRestaurant: selectedValues,
           dishes: dishes,
         };
+
         saveItem(data);
         setIsLoading(false);
         setFields(true);
@@ -193,8 +197,8 @@ const CreateContainer = () => {
       }
     } catch (error) {
       setFields(true);
-      setMsg("Error while uploading : Try AGain 🙇");
-      errorToaster("Error while uploading : Try AGain 🙇");
+      setMsg("Error while uploading: Try Again 🙇");
+      errorToaster("Error while uploading: Try Again 🙇");
       setAlertStatus("danger");
       setTimeout(() => {
         setFields(false);
