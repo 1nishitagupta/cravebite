@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { useStateValue } from "../context/StateProvider";
-import { getAllFoodItems } from "../utils/firebaseFunctions";
+import { editItem, getAllFoodItems } from "../utils/firebaseFunctions";
 import { actionType } from "../context/reducer";
 import { useNavigate } from "react-router-dom";
 import EditRestaurantModal from "./EditRestaurantModal";
@@ -77,6 +77,21 @@ const ViewRestaurant = () => {
         return bValue?.localeCompare(aValue);
       }
     });
+
+  const saveEditedData = (editedData) => {
+    const example = {
+      restaurantID: editedData?.restaurantID,
+      restaurant: editedData?.restaurant,
+      restaurantImage: editedData?.restaurantImage,
+      location: editedData?.location,
+      categoriesInRestaurant: editedData?.categoriesInRestaurant,
+      // dishes: [editedData?.dishes, dishData],
+    };
+
+    editItem(example);
+    handleClose();
+    fetchData();
+  };
 
   useEffect(() => {
     fetchData();
@@ -200,7 +215,7 @@ const ViewRestaurant = () => {
         </tbody>
       </table>
       <EditRestaurantModal open={open} handleClose={handleClose}>
-        <EditForm data={editMode} />
+        <EditForm data={editMode} saveEditedData={saveEditedData} />
       </EditRestaurantModal>
     </div>
   );

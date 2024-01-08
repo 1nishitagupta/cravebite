@@ -8,6 +8,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { firestore } from "../firebase.config";
+import { errorToaster, successToaster } from "./toastify";
 
 // Saving new Item
 export const saveItem = async (data) => {
@@ -27,8 +28,11 @@ export const editItem = async (item) => {
   console.log(itemRef, "itemRef");
 
   try {
-    return await updateDoc(itemRef, item);
+    const response = await updateDoc(itemRef, item);
+    successToaster("Data Updated Succesfully");
+    return response;
   } catch (error) {
     console.error("Error updating document: ", error);
+    errorToaster("Error updating document: ", error);
   }
 };

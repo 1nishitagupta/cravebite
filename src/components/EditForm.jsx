@@ -15,7 +15,7 @@ import { storage } from "../firebase.config";
 import { DishForm } from "./DishForm";
 import { editItem } from "../utils/firebaseFunctions";
 
-const EditForm = ({ data }) => {
+const EditForm = ({ data, saveEditedData }) => {
   const [dishId, setDishId] = useState(null);
   const [dishForm, setDishForm] = useState(false);
 
@@ -82,19 +82,6 @@ const EditForm = ({ data }) => {
       ...prevData,
       [e.target.name]: e.target.value,
     }));
-  };
-
-  const saveEditedData = () => {
-    const example = {
-      restaurantID: editedData?.restaurantID,
-      restaurant: editedData?.restaurant,
-      restaurantImage: editedData?.restaurantImage,
-      location: editedData?.location,
-      categoriesInRestaurant: editedData?.categoriesInRestaurant,
-      dishes: [editedData?.dishes, dishData],
-    };
-
-    editItem(example);
   };
 
   return (
@@ -247,7 +234,9 @@ const EditForm = ({ data }) => {
             type="button"
             className="ml-0 md:ml-auto w-full md:w-auto border-none outline-none bg-emerald-500 px-12 py-2 rounded-lg text-lg text-white font-semibold"
             // onClick={saveDetails}
-            onClick={saveEditedData}
+            onClick={() => {
+              saveEditedData(editedData);
+            }}
           >
             Save Data
           </button>
