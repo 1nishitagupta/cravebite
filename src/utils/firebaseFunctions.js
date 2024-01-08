@@ -1,6 +1,7 @@
 /* eslint-disable no-debugger */
 import {
   collection,
+  deleteDoc,
   doc,
   getDocs,
   query,
@@ -34,5 +35,18 @@ export const editItem = async (item) => {
   } catch (error) {
     console.error("Error updating document: ", error);
     errorToaster("Error updating document: ", error);
+  }
+};
+
+export const deleteItem = async (restaurantID) => {
+  console.log(restaurantID);
+  const itemRef = doc(firestore, "foodItems", restaurantID);
+
+  try {
+    await deleteDoc(itemRef);
+    successToaster("Item Deleted Successfully");
+  } catch (error) {
+    console.error("Error deleting document: ", error);
+    errorToaster("Error deleting document: ", error);
   }
 };

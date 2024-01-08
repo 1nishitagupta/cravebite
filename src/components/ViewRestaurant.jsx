@@ -1,7 +1,11 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { useStateValue } from "../context/StateProvider";
-import { editItem, getAllFoodItems } from "../utils/firebaseFunctions";
+import {
+  deleteItem,
+  editItem,
+  getAllFoodItems,
+} from "../utils/firebaseFunctions";
 import { actionType } from "../context/reducer";
 import { useNavigate } from "react-router-dom";
 import EditRestaurantModal from "./EditRestaurantModal";
@@ -27,8 +31,11 @@ const ViewRestaurant = () => {
     // navigate(`/edit/${id}`);
   };
 
-  const handleDelete = (index) => {
+  const handleDelete = (item) => {
+    console.log(item?.restaurantID);
     // Implement your delete logic here
+    alert("Are You Sure To Delete");
+    deleteItem(item?.restaurantID);
   };
 
   const fetchData = async () => {
@@ -106,7 +113,7 @@ const ViewRestaurant = () => {
 
     console.log(example, "example");
 
-    // editItem(example);
+    editItem(example);
     handleClose();
     fetchData();
   };
@@ -220,7 +227,7 @@ const ViewRestaurant = () => {
                       Edit
                     </button>
                     <button
-                      onClick={() => handleDelete(index)}
+                      onClick={() => handleDelete(item)}
                       className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600"
                     >
                       Delete
